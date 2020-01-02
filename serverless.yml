@@ -5,6 +5,7 @@ plugins:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
+  registrationsTable: registrations-${self:custom.stage}
 
 provider:
   name: aws
@@ -13,8 +14,21 @@ provider:
   region: eu-central-1
   memorySize: 128
   timeout: 10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "Fn::GetAtt": [ RegistrationsTable, Arn ]
   environment:
     ENVIRONMENT: ${self:custom.stage}
+    REGISTRATIONS_TABLE: ${self:custom.registrationsTable}
 
 package:
   individually: true
@@ -27,3 +41,17 @@ functions:
           method: POST
           path: register
           cors: true
+
+resources:
+  Resources:
+    RegistrationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.registrationsTable}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
