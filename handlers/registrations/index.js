@@ -1,4 +1,5 @@
 import { addRegistration } from '../../shared/dynamo'
+import { sendRegistrationEmail } from '../../shared/email'
 import { successResponse } from '../../shared/responses'
 
 exports.handler = async event => {
@@ -8,7 +9,10 @@ exports.handler = async event => {
 
   console.info('Registration body', parsedBody)
 
-  await addRegistration(parsedBody)
+  await Promise.all([
+    addRegistration(parsedBody),
+    sendRegistrationEmail(parsedBody)
+  ])
 
   return successResponse()
 }
