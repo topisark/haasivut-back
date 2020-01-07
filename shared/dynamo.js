@@ -9,7 +9,8 @@ module.exports.addRegistration = async data => {
     TableName: REGISTRATIONS_TABLE,
     Item: {
       ...data,
-      id: uuid()
+      id: uuid(),
+      created: new Date().toISOString()
     }
   }).promise()
 }
