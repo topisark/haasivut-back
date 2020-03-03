@@ -7,6 +7,15 @@ module.exports.successResponse = data => ({
   }
 })
 
+module.exports.csvResponse = data => ({
+  statusCode: 200,
+  body: data,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'text/csv',
+  }
+})
+
 module.exports.badRequestResponse = {
   statusCode: 400,
   body: JSON.stringify({ error: 'Incorrect or missing parameters' }),

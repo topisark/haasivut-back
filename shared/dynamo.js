@@ -14,3 +14,22 @@ module.exports.addRegistration = async data => {
     }
   }).promise()
 }
+
+module.exports.getRegistrations = async (items = [], lastKey = null) => {
+  const data = await docClient.scan({
+    TableName: REGISTRATIONS_TABLE,
+    ExclusiveStartKey: lastKey,
+  }).promise()
+
+  console.log("REGISTRATIONS_TABLE", REGISTRATIONS_TABLE)
+  console.log("data", data)
+
+  const foundItems = data && data.Items
+  const combinedItems = [ ...foundItems, ...items ]
+
+  if (data.LastEvaluatedKey) {
+    return getRegistrations(combinedItems, data.LastEvaluatedKey)
+  }
+
+  return combinedItems
+}

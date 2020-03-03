@@ -14,6 +14,9 @@ provider:
   region: eu-central-1
   memorySize: 256
   timeout: 10
+  profile: personal
+  apiKeys:
+    - value: 3oTVWKxXWGPdHr7bqCyYmImIuCCkjjZuU1rKRaSWekVwMAp0U0mkI2NKgxzDPFKs
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -39,6 +42,13 @@ package:
   individually: true
 
 functions:
+  list-registrations:
+    handler: handlers/list-registrations/index.handler
+    events:
+      - http:
+          method: GET
+          path: list-registrations
+          private: true
   registrations:
     handler: handlers/registrations/index.handler
     events:
